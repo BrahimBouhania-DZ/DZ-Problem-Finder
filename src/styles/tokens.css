@@ -1,0 +1,48 @@
+:root {
+  --font-sans: 'IBM Plex Sans Arabic', 'Cairo', system-ui, sans-serif;
+
+  --color-primary: #3b82f6;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-muted: #64748b;
+  --color-border: #e2e8f0;
+
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+}
+
+[data-sector='accounting'] {
+  --color-primary: #10b981;
+}
+[data-sector='construction'] {
+  --color-primary: #f59e0b;
+}
+[data-sector='commerce'] {
+  --color-primary: #8b5cf6;
+}
+[data-sector='workshop'] {
+  --color-primary: #ef4444;
+}
+[data-sector='health'] {
+  --color-primary: #ec4899;
+}
+[data-sector='veterinary'] {
+  --color-primary: #84cc16;
+}
+[data-sector='training'] {
+  --color-primary: #0ea5e9;
+}
+[data-sector='hotel'] {
+  --color-primary: #f43f5e;
+}
+[data-sector='travel'] {
+  --color-primary: #06b6d4;
+}
+[data-sector='realestate'] {
+  --color-primary: #6366f1;
+}
+[data-sector='hr'] {
+  --color-primary: #a855f7;
+}
