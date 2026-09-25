@@ -32,7 +32,7 @@
 | RLS: `public` قراءة محدودة، `admin` كتابة | 33 سياسة على 17/17 جدول ✅ |
 | حساب `opportunity_score` في القاعدة | دالة `compute_opportunity_score` ✅ |
 | توليد `database.types.ts` من Supabase | `src/types/database.types.ts` ⏳ يحتاج مشروع Supabase |
-| seed: 12 قطاعًا + 15 سؤالًا + 3 قواعد branching | `supabase/seed.sql` ⏳ |
+| seed: 12 قطاعًا + 15 سؤالًا + 3 قواعد branching | `supabase/seed.sql` ✅ 13 قطاع · 58 ولاية · 15 سؤال · 67 خيار · 4 قواعد |
 
 **معيار القبول:** ~~`supabase db reset` ينجح~~ ✅ تم التحقق على PostgreSQL 16 حقيقي — 17 جدول، 7 enums، 33 سياسة RLS، 15 فهرس، 3 triggers، CASCADE سليم، و4 اختبارات سلبية مرفوضة بشكل صحيح.
 
