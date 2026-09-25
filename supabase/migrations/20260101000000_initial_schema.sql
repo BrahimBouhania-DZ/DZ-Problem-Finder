@@ -305,9 +305,13 @@ $$;
 comment on function compute_opportunity_score is
   'المجموع من 0 إلى 5. مؤشر بحث داخلي فقط — ليس دليلًا على وجود سوق (docs/01-survey-design.md:741)';
 
+-- يُعيد NULL عند غياب صف profile — مهم أمنيًا:
+-- NULL في شرط RLS يعني DENY، فيُغلق الباب افتراضيًا (fail closed).
+-- استخدام coalesce(..., 'researcher') هنا يمنح صلاحيات قراءة لأي
+-- متصل بلا صف profile، بما في ذلك anon. لا تفعل ذلك.
 create function dzpf_role() returns user_role
 language sql stable security definer set search_path = public as $$
-  select coalesce((select role from profiles where id = auth.uid()), 'researcher'::user_role);
+  select (select role from profiles where id = auth.uid());
 $$;
 
 create function is_admin() returns boolean
