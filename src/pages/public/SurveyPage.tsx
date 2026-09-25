@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowRight, ArrowLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/Button/Button';
 import { ProgressBar } from '@/components/ui/ProgressBar/ProgressBar';
 import { AnswerCard } from '@/components/forms/AnswerCard/AnswerCard';
@@ -82,9 +82,6 @@ export default function SurveyPage() {
     load();
   }, [sectorId]);
 
-  const currentIndex = state
-    ? state.questions.findIndex(q => q.id === state.currentQuestion.id)
-    : 0;
 
   const visibleQuestions = state
     ? state.questions.filter(q =>
