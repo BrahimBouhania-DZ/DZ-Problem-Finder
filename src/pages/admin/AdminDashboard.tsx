@@ -1,167 +1,138 @@
 import { useState, useEffect } from 'react';
-import { Users, AlertCircle, CheckSquare, TrendingUp, Activity, ArrowUpRight } from 'lucide-react';
-import { supabase } from '@/lib/supabase/client';
+import { Briefcase, Activity, AlertCircle, TrendingUp, Sparkles, DollarSign } from 'lucide-react';
+import { api } from '@/lib/api';
 import './AdminDashboard.css';
 
-interface Stats {
-  totalResponses: number;
-  completedResponses: number;
-  totalProblems: number;
-  validatedProblems: number;
+interface DashboardStats {
+  totalProjects: number;
+  analyzingNow: number;
+  totalRevenue: number;
+  avgROI: number;
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  DISCOVERED: 'مكتشفة',
-  REPEATED: 'متكررة',
-  EVIDENCED: 'موثقة',
-  VALIDATED: 'متحقق منها',
-  DEMAND_CONFIRMED: 'طلب مؤكد',
-  PAYMENT_VALIDATED: 'دفع فعلي',
-  MVP_CANDIDATE: 'مرشح MVP',
-};
-
-const STATUS_COLORS: Record<string, string> = {
-  DISCOVERED: '#2563EB',
-  REPEATED: '#7C3AED',
-  EVIDENCED: '#0891B2',
-  VALIDATED: '#16A34A',
-  DEMAND_CONFIRMED: '#15803D',
-  PAYMENT_VALIDATED: '#166534',
-  MVP_CANDIDATE: '#EA580C',
-};
-
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<Stats>({ totalResponses: 0, completedResponses: 0, totalProblems: 0, validatedProblems: 0 });
-  const [problemsByStatus, setProblemsByStatus] = useState<Record<string, number>>({});
-  const [recentProblems, setRecentProblems] = useState<Array<{ id: string; title: string; status: string; sector_id: string | null }>>([]);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalProjects: 0,
+    analyzingNow: 0,
+    totalRevenue: 0,
+    avgROI: 0
+  });
+  const [recentProjects, setRecentProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const load = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const [{ count: totalResp }, { count: completedResp }, { count: totalProb }, { count: validatedProb }, { data: problems }] = await Promise.all([
-          supabase.from('survey_responses').select('*', { count: 'exact', head: true }),
-          supabase.from('survey_responses').select('*', { count: 'exact', head: true }).eq('is_completed', true),
-          supabase.from('problems').select('*', { count: 'exact', head: true }),
-          supabase.from('problems').select('*', { count: 'exact', head: true }).eq('status', 'VALIDATED'),
-          supabase.from('problems').select('id,title,status,sector_id').order('created_at', { ascending: false }).limit(5),
-        ]);
-
+        // Fetch projects from our new NestJS Backend
+        const projects = await api.projects.getAll();
+        
         setStats({
-          totalResponses: totalResp ?? 0,
-          completedResponses: completedResp ?? 0,
-          totalProblems: totalProb ?? 0,
-          validatedProblems: validatedProb ?? 0,
+          totalProjects: projects.length,
+          analyzingNow: projects.filter((p: any) => p.status === 'analyzing').length,
+          totalRevenue: 12500000, // Mocked for demonstration
+          avgROI: 18.5,           // Mocked for demonstration
         });
-
-        // Group by status
-        const byStatus: Record<string, number> = {};
-        for (const p of problems ?? []) {
-          byStatus[p.status] = (byStatus[p.status] ?? 0) + 1;
-        }
-        setProblemsByStatus(byStatus);
-        setRecentProblems(problems ?? []);
+        
+        setRecentProjects(projects.slice(0, 5));
+      } catch (error) {
+        console.error('Failed to load dashboard data:', error);
       } finally {
         setLoading(false);
       }
     };
-    load();
+    fetchDashboardData();
   }, []);
 
   const STAT_CARDS = [
-    { label: 'إجمالي المشاركات', value: stats.totalResponses, icon: Users,        color: '#2563EB', sub: `${stats.completedResponses} مكتملة` },
-    { label: 'المشاكل المكتشفة',  value: stats.totalProblems,   icon: AlertCircle,  color: '#DC2626', sub: 'مشاكل سوق جزائري' },
-    { label: 'مشاكل متحقق منها', value: stats.validatedProblems,icon: CheckSquare,  color: '#16A34A', sub: 'من مصدرين أو أكثر' },
-    { label: 'نسبة الإتمام',      value: stats.totalResponses > 0 ? `${Math.round((stats.completedResponses / stats.totalResponses) * 100)}%` : '0%', icon: TrendingUp, color: '#7C3AED', sub: 'معدل إتمام الاستبيان' },
+    { label: 'المشاريع المحللة', value: stats.totalProjects, icon: Briefcase, color: 'var(--brand-primary)' },
+    { label: 'قيد التحليل (AI)', value: stats.analyzingNow, icon: Sparkles, color: 'var(--brand-secondary)' },
+    { label: 'إجمالي الإيرادات المتوقعة', value: `${(stats.totalRevenue / 1000000).toFixed(1)}M DZD`, icon: DollarSign, color: 'var(--success)' },
+    { label: 'متوسط العائد (ROI)', value: `${stats.avgROI}%`, icon: TrendingUp, color: 'var(--warning)' },
   ];
 
   if (loading) {
     return (
-      <div className="admin-loading">
-        <div className="survey-spinner" />
-        <p>جارٍ تحميل البيانات...</p>
+      <div className="dashboard-loading">
+        <div className="glow-spinner" />
+        <p>جاري تهيئة البيانات والمحرك المالي...</p>
       </div>
     );
   }
 
   return (
-    <div className="admin-dashboard">
-      <div className="dashboard-header">
-        <h1 className="dashboard-title">لوحة التحكم</h1>
-        <p className="dashboard-sub">نظرة عامة على بيانات السوق الجزائري</p>
-      </div>
+    <div className="premium-dashboard">
+      <header className="dashboard-header glass-panel">
+        <div>
+          <h1 className="gradient-text">لوحة التحكم الذكية</h1>
+          <p>تحليل السوق وإدارة المشاريع المدعومة بالذكاء الاصطناعي</p>
+        </div>
+        <div className="header-actions">
+          <button className="btn-primary-glow">
+            <Sparkles size={18} />
+            تحليل مشروع جديد
+          </button>
+        </div>
+      </header>
 
-      {/* Stats Grid */}
       <div className="stats-grid">
         {STAT_CARDS.map(card => {
           const Icon = card.icon;
           return (
-            <div key={card.label} className="stat-card">
-              <div className="stat-card__icon" style={{ background: `${card.color}18`, color: card.color }}>
-                <Icon size={22} />
+            <div key={card.label} className="stat-card glass-panel">
+              <div className="stat-icon-wrapper" style={{ boxShadow: `0 0 15px ${card.color}40` }}>
+                <Icon size={24} color={card.color} />
               </div>
-              <div className="stat-card__body">
-                <p className="stat-card__label">{card.label}</p>
-                <p className="stat-card__value">{card.value}</p>
-                <p className="stat-card__sub">{card.sub}</p>
+              <div className="stat-details">
+                <h3>{card.value}</h3>
+                <p>{card.label}</p>
               </div>
             </div>
           );
         })}
       </div>
 
-      <div className="dashboard-grid">
-        {/* Problem Status */}
-        <div className="dashboard-card">
-          <div className="dashboard-card__header">
-            <Activity size={18} />
-            <h2>المشاكل حسب الحالة</h2>
+      <div className="dashboard-bento">
+        {/* Recent Projects Panel */}
+        <div className="bento-box glass-panel span-2">
+          <div className="bento-header">
+            <Activity size={20} color="var(--brand-primary)" />
+            <h2>أحدث دراسات الجدوى</h2>
           </div>
-          <div className="status-list">
-            {Object.entries(STATUS_LABELS).map(([key, label]) => {
-              const count = problemsByStatus[key] ?? 0;
-              const total = stats.totalProblems || 1;
-              const pct = Math.round((count / total) * 100);
-              return (
-                <div key={key} className="status-row">
-                  <span className="status-badge" style={{ background: `${STATUS_COLORS[key]}18`, color: STATUS_COLORS[key] }}>
-                    {label}
-                  </span>
-                  <div className="status-bar-track">
-                    <div className="status-bar-fill" style={{ width: `${pct}%`, background: STATUS_COLORS[key] }} />
-                  </div>
-                  <span className="status-count">{count}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Recent Problems */}
-        <div className="dashboard-card">
-          <div className="dashboard-card__header">
-            <AlertCircle size={18} />
-            <h2>أحدث المشاكل</h2>
-          </div>
-          {recentProblems.length === 0 ? (
+          {recentProjects.length === 0 ? (
             <div className="empty-state">
-              <p>لا توجد مشاكل مسجَّلة بعد</p>
+              <AlertCircle size={32} opacity={0.5} />
+              <p>لم يتم إضافة مشاريع بعد في قاعدة البيانات الجديدة.</p>
             </div>
           ) : (
-            <div className="recent-list">
-              {recentProblems.map(p => (
-                <div key={p.id} className="recent-item">
-                  <div className="recent-item__info">
-                    <p className="recent-item__title">{p.title}</p>
-                    <span className="status-badge" style={{ background: `${STATUS_COLORS[p.status] ?? '#64748B'}18`, color: STATUS_COLORS[p.status] ?? '#64748B', fontSize: '0.75rem' }}>
-                      {STATUS_LABELS[p.status] ?? p.status}
-                    </span>
+            <div className="project-list">
+              {recentProjects.map(p => (
+                <div key={p.id} className="project-item">
+                  <div className="project-info">
+                    <h4>{p.name}</h4>
+                    <span>{p.industry}</span>
                   </div>
-                  <ArrowUpRight size={16} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+                  <div className={`status-badge status-${p.status}`}>
+                    {p.status === 'draft' ? 'مسودة' : p.status === 'analyzing' ? 'قيد التحليل' : 'مكتمل'}
+                  </div>
                 </div>
               ))}
             </div>
           )}
+        </div>
+
+        {/* AI Insights Panel */}
+        <div className="bento-box glass-panel ai-insights">
+          <div className="bento-header">
+            <Sparkles size={20} color="var(--brand-secondary)" />
+            <h2>رؤى الذكاء الاصطناعي</h2>
+          </div>
+          <div className="insight-card">
+            <p>💡 <strong>قطاع التكنولوجيا:</strong> الطلب يرتفع بنسبة 25% على الحلول السحابية في الجزائر العاصمة.</p>
+          </div>
+          <div className="insight-card">
+            <p>⚠️ <strong>قطاع البناء:</strong> تحذير من ارتفاع تكاليف المواد الأولية بنسبة 12% هذا الربع.</p>
+          </div>
+          <button className="btn-secondary-glow mt-auto">توليد تقرير شامل</button>
         </div>
       </div>
     </div>

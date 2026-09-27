@@ -1,117 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Cairo:wght@400;600;700&display=swap');
+
 :root {
     /* =========================
-       Brand
+       Brand Premium Palette
     ========================= */
-    --brand-primary: #0F766E;
-    --brand-primary-dark: #115E59;
-    --brand-primary-light: #CCFBF1;
-
+    --brand-primary: #00F0FF; /* Neon Cyan */
+    --brand-secondary: #7000FF; /* Deep Purple */
+    --brand-accent: #FF0055; /* Neon Pink */
+    
     /* =========================
-       Background
+       Background (Dark Mode Default for WOW factor)
     ========================= */
-    --bg-main: #F7F9FC;
-    --bg-surface: #FFFFFF;
-    --bg-soft: #F1F5F9;
-    --bg-dark: #0F172A;
-
+    --bg-main: #0B0E14; /* Very Dark Blue/Black */
+    --bg-surface: rgba(20, 25, 35, 0.6); /* Glass surface */
+    --bg-surface-hover: rgba(30, 38, 52, 0.8);
+    --bg-panel: linear-gradient(145deg, rgba(30,35,45,0.7) 0%, rgba(15,18,25,0.9) 100%);
+    
     /* =========================
        Text
     ========================= */
-    --text-primary: #172033;
-    --text-secondary: #64748B;
-    --text-muted: #94A3B8;
-    --text-white: #FFFFFF;
+    --text-primary: #FFFFFF;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+    --text-highlight: #00F0FF;
 
     /* =========================
-       Border
+       Border & Glass
     ========================= */
-    --border-light: #E2E8F0;
-    --border-medium: #CBD5E1;
-
+    --border-glass: rgba(255, 255, 255, 0.08);
+    --border-glow: rgba(0, 240, 255, 0.3);
+    
     /* =========================
        Status
     ========================= */
-    --success: #16A34A;
-    --warning: #F59E0B;
-    --danger: #DC2626;
-    --info: #2563EB;
+    --success: #00FF88;
+    --warning: #FFB800;
+    --danger: #FF0055;
+    --info: #00F0FF;
 
     /* =========================
        Radius
     ========================= */
-    --radius-xs: 6px;
-    --radius-sm: 10px;
-    --radius-md: 14px;
-    --radius-lg: 20px;
-    --radius-xl: 28px;
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
     --radius-pill: 999px;
 
     /* =========================
-       Shadows
+       Shadows & Glows
     ========================= */
-    --shadow-sm: 0 2px 8px rgba(15, 23, 42, .06);
-    --shadow-md: 0 8px 24px rgba(15, 23, 42, .08);
-    --shadow-lg: 0 20px 45px rgba(15, 23, 42, .12);
-    --shadow-3d: 0 18px 35px rgba(15, 23, 42, .14);
+    --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --glow-primary: 0 0 20px rgba(0, 240, 255, 0.4);
+    --glow-secondary: 0 0 20px rgba(112, 0, 255, 0.4);
 
     /* =========================
        Motion
     ========================= */
-    --transition-fast: 150ms ease;
-    --transition-normal: 250ms ease;
-    --transition-slow: 400ms ease;
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: 0.5s cubic-bezier(0.68, -0.55, 0.26, 1.55);
 
-    /* =========================
-       Layout
-    ========================= */
-    --container: 1200px;
-    --content-width: 850px;
-
-    /* =========================
-       Z-index
-    ========================= */
-    --z-header: 100;
-    --z-dropdown: 200;
-    --z-modal: 500;
-    --z-toast: 700;
-    
     /* =========================
        Dynamic Theme (Default)
     ========================= */
-    --accent: #0F766E;
-    --accent-dark: #115E59;
-    --accent-light: #CCFBF1;
+    --accent: var(--brand-primary);
 }
 
-/* Dynamic Sectors Colors */
-[data-sector="commerce"] { --accent: #2563EB; --accent-dark: #1D4ED8; --accent-light: #DBEAFE; }
-[data-sector="construction"] { --accent: #EA580C; --accent-dark: #C2410C; --accent-light: #FFEDD5; }
-[data-sector="health"] { --accent: #0891B2; --accent-dark: #0E7490; --accent-light: #CFFAFE; }
-[data-sector="agriculture"] { --accent: #16A34A; --accent-dark: #15803D; --accent-light: #DCFCE7; }
-[data-sector="veterinary"] { --accent: #65A30D; --accent-dark: #4D7C0F; --accent-light: #ECFCCB; }
-[data-sector="tourism"] { --accent: #7C3AED; --accent-dark: #6D28D9; --accent-light: #EDE9FE; }
-[data-sector="education"] { --accent: #9333EA; --accent-dark: #7E22CE; --accent-light: #F3E8FF; }
-[data-sector="accounting"] { --accent: #0F766E; --accent-dark: #0F766E; --accent-light: #CCFBF1; }
-[data-sector="technology"] { --accent: #4F46E5; --accent-dark: #4338CA; --accent-light: #E0E7FF; }
-[data-sector="maintenance"] { --accent: #D97706; --accent-dark: #B45309; --accent-light: #FEF3C7; }
-[data-sector="industry"] { --accent: #475569; --accent-dark: #334155; --accent-light: #F1F5F9; }
-[data-sector="realestate"] { --accent: #0284C7; --accent-dark: #0369A1; --accent-light: #E0F2FE; }
-[data-sector="transport"] { --accent: #0369A1; --accent-dark: #075985; --accent-light: #E0F2FE; }
-[data-sector="restaurant"] { --accent: #DC2626; --accent-dark: #B91C1C; --accent-light: #FEE2E2; }
-
 body {
-    font-family: "Cairo", system-ui, sans-serif;
+    font-family: "Cairo", "Outfit", system-ui, sans-serif;
     background-color: var(--bg-main);
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(112,0,255,0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(0,240,255,0.1) 0px, transparent 50%);
+    background-attachment: fixed;
     color: var(--text-primary);
     margin: 0;
     padding: 0;
-    line-height: 1.8;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
+    font-weight: 700;
+    letter-spacing: -0.02em;
 }
 
 * {
     box-sizing: border-box;
+}
+
+/* Glassmorphism Utility */
+.glass-panel {
+    background: var(--bg-surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-glass);
 }
