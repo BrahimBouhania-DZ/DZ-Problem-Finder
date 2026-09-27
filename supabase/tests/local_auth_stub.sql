@@ -4,6 +4,7 @@
 --   psql -d postgres_survey -f supabase/tests/local_auth_stub.sql
 --   psql -d postgres_survey -f supabase/migrations/20260101000000_initial_schema.sql
 --   psql -d postgres_survey -f supabase/seed.sql
+--   psql -d postgres_survey -f supabase/migrations/20260101000100_public_survey_access.sql
 --   psql -d postgres_survey -f supabase/tests/local_grants.sql
 --   psql -d postgres_survey -1 -f supabase/tests/rls_tests.sql
 --

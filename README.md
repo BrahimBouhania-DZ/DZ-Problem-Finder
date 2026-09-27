@@ -60,17 +60,16 @@ npm run dev
 
 ## الحالة الحالية
 
-`Planning` — البنية فقط. الخطوات المتبقية (من `docs/07-stack.md:298`):
+`Development` — قاعدة البيانات والواجهة تعملان معاً:
 
-1. ~~اختيار الـStack~~ ✅
-2. Database Schema
-3. ERD
-4. ~~إنشاء مشروع React/Vite~~ ✅ (بنية فقط)
-5. Design System فعليًا
-6. Landing Page
-7. Sector Selector
-8. Survey Engine
+- ✅ **Schema**: 17 جدولًا · 38 سياسة RLS · seed كامل — `supabase/migrations/`
+- ✅ **اختبارات RLS**: 63 تأكيداً تمر كاملاً (anon / researcher / admin) وقابلة للتكرار — [`supabase/tests/rls_tests.sql`](./supabase/tests/rls_tests.sql)
+- ✅ **الاستبيان العام**: Landing → اختيار القطاع → محرك Branching مع حفظ التقدّم عبر دوال `SECURITY DEFINER`
+- ✅ **لوحة الإدارة**: Dashboard + Problems (لوحة بدون حارس مصادقة بعد)
+- ⏳ **متبقٍّ** (من [`docs/08-roadmap.md`](./docs/08-roadmap.md)): حارس `/admin` (Supabase Auth) · شاشة Submit/Resume · Problem Discovery · تصدير Excel · C6 (خطة التحقق)
+
+> **نموذج أمان الاستبيان**: المشارك مجهول — الـuuid الذي يولّده المتصفح للاستجابة هو رمز الوصول وحده. لا قراءة مباشرة على `survey_responses`/`answers`، والكتابة عبر `save_survey_progress` / `complete_response` / `upsert_answer` فقط. الموثّق في ترويسة [`supabase/migrations/20260101000100_public_survey_access.sql`](./supabase/migrations/20260101000100_public_survey_access.sql).
 
 ## تناقضات مفتوحة
 
-راجع جدول التناقضات C1–C6 في [`docs/00-INDEX.md`](./docs/00-INDEX.md) — أبرزها C1 (ثلاث صيغ مختلفة لقاعدة البيانات) و C4 (Design System مكتوب لـ Blade بينما القرار React).
+C1–C5 مغلقة — راجع [`docs/00-INDEX.md`](./docs/00-INDEX.md). المفتوح: **C6** (الاستبيان ليس validation — تُغلقه `docs/11-validation-plan.md`، لم تُنشأ بعد).

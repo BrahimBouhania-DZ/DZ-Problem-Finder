@@ -1,5 +1,4 @@
 import { NavLink } from 'react-router-dom';
-import { Search } from 'lucide-react';
 import './Navbar.css';
 
 interface NavbarProps {

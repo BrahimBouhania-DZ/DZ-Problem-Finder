@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, HardHat, HeartPulse, Wheat, Dog, Plane, GraduationCap, Calculator, Laptop, Wrench, Factory, Home, Car, Utensils } from 'lucide-react';
 import { setSectorTheme } from '@/lib/utils/theme';

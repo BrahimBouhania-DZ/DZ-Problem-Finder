@@ -74,27 +74,42 @@ export const fetchPublishedSurvey = async () => {
 };
 
 // ========== Session Management ==========
+// نموذج الأمان: anon لا يملك SELECT على survey_responses (الردود مغلقة
+// القراءة تمامًا)، فلا يمكن قراءة الصف بعد الإنشاء (RETURNING مرفوض).
+// لذلك يولّد العميل معرّف الاستجابة بنفسه — الـuuid هو رمز الوصول،
+// والكتابة لاحقًا عبر دوال SECURITY DEFINER تتحقق أن الرد ما زال مفتوحًا.
 
 export const createSurveyResponse = async (
   surveyId: string,
   sectorId: string,
   firstQuestionId: string
 ): Promise<SurveyResponse> => {
-  const { data, error } = await supabase
-    .from('survey_responses')
-    .insert({
-      survey_id: surveyId,
-      sector_id: sectorId,
-      current_question_id: firstQuestionId,
-      visited_question_ids: [firstQuestionId],
-      is_completed: false,
-      started_at: new Date().toISOString(),
-    })
-    .select()
-    .single();
+  const id = crypto.randomUUID();
+  const startedAt = new Date().toISOString();
 
+  const { error } = await supabase.from('survey_responses').insert({
+    id,
+    survey_id: surveyId,
+    sector_id: sectorId,
+    current_question_id: firstQuestionId,
+    visited_question_ids: [firstQuestionId],
+    is_completed: false,
+    started_at: startedAt,
+  });
   if (error) throw error;
-  return data;
+
+  return {
+    id,
+    survey_id: surveyId,
+    organization_id: null,
+    respondent_id: null,
+    sector_id: sectorId,
+    current_question_id: firstQuestionId,
+    visited_question_ids: [firstQuestionId],
+    is_completed: false,
+    started_at: startedAt,
+    completed_at: null,
+  };
 };
 
 export const upsertAnswer = async (
@@ -102,12 +117,11 @@ export const upsertAnswer = async (
   questionId: string,
   value: AnswerValue
 ): Promise<void> => {
-  const { error } = await supabase
-    .from('answers')
-    .upsert(
-      { response_id: responseId, question_id: questionId, value: value as string | string[] | number },
-      { onConflict: 'response_id,question_id' }
-    );
+  const { error } = await supabase.rpc('upsert_answer', {
+    p_response_id: responseId,
+    p_question_id: questionId,
+    p_value: value,
+  });
   if (error) throw error;
 };
 
@@ -116,23 +130,17 @@ export const updateSurveyProgress = async (
   currentQuestionId: string,
   visitedIds: string[]
 ): Promise<void> => {
-  const { error } = await supabase
-    .from('survey_responses')
-    .update({
-      current_question_id: currentQuestionId,
-      visited_question_ids: visitedIds,
-    })
-    .eq('id', responseId);
+  const { error } = await supabase.rpc('save_survey_progress', {
+    p_response_id: responseId,
+    p_question_id: currentQuestionId,
+    p_visited: visitedIds,
+  });
   if (error) throw error;
 };
 
 export const completeSurveyResponse = async (responseId: string): Promise<void> => {
-  const { error } = await supabase
-    .from('survey_responses')
-    .update({
-      is_completed: true,
-      completed_at: new Date().toISOString(),
-    })
-    .eq('id', responseId);
+  const { error } = await supabase.rpc('complete_response', {
+    p_response_id: responseId,
+  });
   if (error) throw error;
 };

@@ -412,7 +412,10 @@ isOneToOne: true
             [_ in never]: never
           }
           Functions: {
-            "compute_opportunity_score":
+            "complete_response":
+{ Args: { "p_response_id": string }; Returns: boolean
+                           },
+"compute_opportunity_score":
 { Args: { "p_feasibility": number,"p_financial_impact": number,"p_frequency": number,"p_reach": number,"p_severity": number,"p_time_loss": number,"p_willingness_to_pay": number }; Returns: number
                            },
 "dearmor":
@@ -435,6 +438,21 @@ isOneToOne: true
                            },
 "pgp_armor_headers":
 { Args: { "": string }; Returns: Record<string, unknown>[]
+                           },
+"question_is_published":
+{ Args: { "p_question_id": string }; Returns: boolean
+                           },
+"response_is_open":
+{ Args: { "p_response_id": string }; Returns: boolean
+                           },
+"save_survey_progress":
+{ Args: { "p_question_id": string,"p_response_id": string,"p_visited": (string)[] }; Returns: boolean
+                           },
+"survey_is_published":
+{ Args: { "p_survey_id": string }; Returns: boolean
+                           },
+"upsert_answer":
+{ Args: { "p_question_id": string,"p_response_id": string,"p_value": Json }; Returns: undefined
                            }
           }
           Enums: {

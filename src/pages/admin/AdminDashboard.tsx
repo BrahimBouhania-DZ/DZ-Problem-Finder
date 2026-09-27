@@ -33,7 +33,7 @@ const STATUS_COLORS: Record<string, string> = {
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats>({ totalResponses: 0, completedResponses: 0, totalProblems: 0, validatedProblems: 0 });
   const [problemsByStatus, setProblemsByStatus] = useState<Record<string, number>>({});
-  const [recentProblems, setRecentProblems] = useState<Array<{ id: string; title: string; status: string; sector_id: string }>>([]);
+  const [recentProblems, setRecentProblems] = useState<Array<{ id: string; title: string; status: string; sector_id: string | null }>>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Filter, AlertCircle, SlidersHorizontal } from 'lucide-react';
+import { Search, AlertCircle, SlidersHorizontal } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import type { Problem } from '@/types/models';
 import './ProblemsPage.css';

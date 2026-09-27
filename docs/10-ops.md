@@ -61,11 +61,16 @@ initdb -D ./pgdata -U $USER --auth=trust -E UTF8
 pg_ctl -D ./pgdata -o "-h 127.0.0.1 -p 55433 -c listen_addresses=127.0.0.1 -c unix_socket_directories=/tmp" -l pg.log start
 
 # 2) مِد{supabase.auth} (غير موجود خارج Supabase)
-psql -d postgres_survey -f auth_stub.sql
+psql -d postgres_survey -f supabase/tests/local_auth_stub.sql
 
 # 3) migration + seed
 psql -d postgres_survey -f supabase/migrations/20260101000000_initial_schema.sql
 psql -d postgres_survey -f supabase/seed.sql
+psql -d postgres_survey -f supabase/migrations/20260101000100_public_survey_access.sql
+
+# 3ب) صلاحيات + اختبارات RLS (63 تأكيداً — انظر supabase/tests/)
+psql -d postgres_survey -f supabase/tests/local_grants.sql
+psql -d postgres_survey -1 -f supabase/tests/rls_tests.sql
 
 # 4) توليد الأنواع
 supabase gen types typescript \
